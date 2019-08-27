@@ -2,8 +2,11 @@
 import Vapor
 
 extension Html.Node: ResponseEncodable {
-  public func encode(for req: Request) throws -> EventLoopFuture<Response> {
-    let res = Response(http: .init(headers: ["content-type": "text/html; charset=utf-8"], body: Html.render(self)), using: req.sharedContainer)
-    return req.sharedContainer.eventLoop.newSucceededFuture(result: res)
-  }
+    public func encodeResponse(for request: Request) -> EventLoopFuture<Response> {
+        let response = Response(
+            headers: ["content-type": "text/html; charset=utf-8"],
+            body: .init(string: Html.render(self))
+        )
+        return request.eventLoop.future(response)
+    }
 }
